@@ -71,9 +71,20 @@ Object.keys(config.proxyTable).forEach(context => {
 Object.keys(config.jsonTable).forEach(context => {
   let fileName = config.jsonTable[context]
   app.all(context, (req, res, next) => {
-    fs.readFile(path.join(__dirname, 'mock', 'json', `${fileName}.json`), (err, data) => {
+    const filePathAndName = path.join(__dirname, 'mock', 'json', `${fileName}.json`)
+    fs.readFile(filePathAndName, (err, data) => {
       if (err) {
         console.log(err)
+        fs.access(filePathAndName, fs.F_OK, err => {
+          if (err) {
+            console.log(err)
+            console.log(`${filePathAndName} may not exist, trying to build it ...`)
+            fs.writeFile(filePathAndName, '', err => {
+              console.log(err ? `${filePathAndName}文件创建失败！` : `${filePathAndName}文件创建成功！`)
+            })
+          }
+        })
+        res.json({})
         return
       }
       res.json(JSON.parse(data.toString()))

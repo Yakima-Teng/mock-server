@@ -1,6 +1,6 @@
 # mock-server
 
-服务器端数据模拟，方便前端工程师独立于后端进行开发。支持跨域访问。
+服务器端数据模拟，方便前端工程师独立于后端进行开发。支持跨域访问，支持post大文件（不会在硬盘上进行存储）。
 
 适用于前端为http请求，后端返回json数据的场景。
 
@@ -23,14 +23,14 @@ Established by Yakima Teng
 ```
 proxyTable: {
   '/blog': 'http://yakima.duapp.com/',
-  '/blog/details': 'http:localhost:6060',
+  '/blog/details': 'http://localhost:6060',
   '/wechat': 'http:localhost:6060'
 }
 ```
 
 如上配置对应的描述如下：
 
-- 本地发出的请求地址以/blog开头的请求会被转发到http://yakima.duapp.com/域名下相同的路径。即本地发出的/blog/v1/pages将会收到http://yakima.duapp.com/blog/v1/pages请求的响应结果。
+- 本地发出的请求地址以/blog开头的请求会被转发到yakima.duapp.com/域名下相同的路径。即本地发出的/blog/v1/pages将会收到yakima.duapp.com/blog/v1/pages请求的响应结果。
 - 这里采用“越具体的配置，优先级越高”的规则，即如果本地发出的请求以/blog/details开头，则采用/blog/details规则匹配的代理域名而非/blog规则匹配的代理域名。
 
 说明：程序会自动对代理请求返回的结果进行备份，备份目录为/mock/proxy，生成的文件名是根据请求地址自动生成的。大部分时候不需要搭理这些备份文件。
@@ -49,9 +49,9 @@ jsonTable: {
 
 若本地发起了请求地址为/world/example的请求，则服务器会将/mock/json/example.json的内容予以返回。
 
-注意：需要在启动服务器之前，先在/mock/json目录下手动建立对应的json文件，并自行填充数据。
+注意：需要在启动服务器之前，先在/mock/json目录下手动建立对应的json文件，并自行填充数据；如果您未手动新建json文件，程序会自动帮你新建一个空的json文件，内容还需您自行填充。
 
-小技巧：可以将程序在/mock/proxy目录下生成的被分为文件拷贝至此处使用。
+小技巧：可以将程序在/mock/proxy目录下生成的备份文件拷贝至此处使用。
 
 ## 返回JS自定义数据
 
