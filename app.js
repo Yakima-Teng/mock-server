@@ -85,7 +85,7 @@ Object.keys(config.jsonTable).forEach(context => {
 Object.keys(config.customTable).forEach(context => {
   app.all(context, (req, res, next) => {
     const filePathAndName = path.join(__dirname, 'mock', 'custom', `${config.customTable[context]}.js`)
-    const content = require(filePathAndName)
+    const content = require(filePathAndName)()
     res.json(content)
   })
 })
@@ -145,6 +145,11 @@ function onListening () {
     ? 'pipe ' + addr
     : 'port ' + addr.port
   console.log('Listening on ' + bind)
-  // opn(`http://localhost:${config.port}/readme`)
+
+  // 若要禁止启动服务器时自动打开说明文档，请手动将下面一行代码注释掉
+  opn(`http://localhost:${config.port}/readme`)
+
+  // 若要禁止启动服务器时自动打开ajax测试页，请手动将下面一行代码注释掉
+  opn(`http://localhost:${config.port + config.root}`)
 }
 
