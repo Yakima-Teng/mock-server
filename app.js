@@ -38,7 +38,7 @@ app.use(config.root, express.static(path.join(__dirname, 'public'), {
   maxAge: 60 * 60 * 1000
 }))
 
-app.get('/yakima', (req, res, next) => {
+app.get('/readme', (req, res, next) => {
   fs.readFile(path.join(__dirname, 'README.md'), (err, data) => {
     if (err) {
       console.log(err)
@@ -145,6 +145,6 @@ function onListening () {
     ? 'pipe ' + addr
     : 'port ' + addr.port
   console.log('Listening on ' + bind)
-  // opn(`http://localhost:${config.port}/yakima`)
+  // opn(`http://localhost:${config.port}/readme`)
 }
 
