@@ -16,6 +16,7 @@ let app = express()
 
 // allow cross-origin ajax request
 app.all('*', (req, res, next) => {
+  console.log(`[${req.method}] ${req.url} ${new Date()}`)
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
   res.header('Access-Control-Allow-Methods','PUT,POST,GET,DELETE,OPTIONS')
@@ -146,3 +147,4 @@ function onListening () {
   console.log('Listening on ' + bind)
   // opn(`http://localhost:${config.port}/yakima`)
 }
+
