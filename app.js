@@ -56,7 +56,7 @@ Object.keys(config.proxyTable).forEach(context => {
     changeOrigin: true,
     onProxyRes (proxyRes, req, res) {
       body.parse(proxyRes, (err, data) => {
-        const fileName = `${req.url.split(/^\//)[1].replace(/\//g, '-')}.json`
+        const fileName = `${req.url.split('#')[0].split('?')[0].split(/^\//)[1].replace(/\//g, '-')}.json`
         fs.writeFile(path.join(__dirname, 'mock', 'proxy', fileName), JSON.stringify(data, null, 2), err => {
           if (err) { console.log(err) }
         })
