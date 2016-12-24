@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>测试页</title>
+</head>
+<body>
+  <section class="wrapper">
+    <button id="ajaxProxy">点击发送请求（请求代理）</button>
+    <textarea id="responseProxy" cols="30" rows="10"></textarea>
+  </section>
+  <section class="wrapper">
+    <button id="ajaxJSON">点击发送请求（本地JSON）</button>
+    <textarea id="responseJSON" cols="30" rows="10"></textarea>
+  </section>
+  <section class="wrapper">
+    <button id="ajaxCustom">点击发送请求（自定义内容）</button>
+    <textarea id="responseCustom" cols="30" rows="10"></textarea>
+  </section>
+  <script>
+    document.getElementById('ajaxProxy').addEventListener('click', function () {
+      doGet({
+        url: '/blog/v1/pages',
+        data: {},
+        success: function (data) { document.getElementById('responseProxy').value = data },
+        error: function () {},
+        complete: function () {}
+      })
+    }, false)
+
+    document.getElementById('ajaxJSON').addEventListener('click', function () {
+      doGet({
+        url: '/world/example',
+        data: {},
+        success: function (data) { document.getElementById('responseJSON').value = data },
+        error: function () {},
+        complete: function () {}
+      })
+    }, false)
+
+    document.getElementById('ajaxCustom').addEventListener('click', function () {
+      doGet({
+        url: '/great/what',
+        data: {},
+        success: function (data) { document.getElementById('responseCustom').value = data },
+        error: function () {},
+        complete: function () {}
+      })
+    }, false)
+
+    // ajax post
+    function doGet (obj) {
+      obj = obj || {}
+      // 格式化参数
+      const params = (() => {
+        if (obj.headers && obj.headers['Content-Type'] && obj.headers['Content-Type'].indexOf('application/json') !== -1) {
+          return JSON.stringify(obj.data)
+        } else {
+          var arr = []
+          var requestData = obj.data
+          for (var key in requestData) {
+            if (requestData.hasOwnProperty(key)) {
+              arr.push(encodeURIComponent(key) + '=' + encodeURIComponent(requestData[key]))
+            }
+          }
+          // 设置随机数，防止缓存
+          arr.push('t=' + Math.random())
+          return arr.join('&')
+        }
+      })()
+
+      // 兼容性创建对象
+      const xhr = (() => {
+        if (window.XMLHttpRequest) {
+          return new window.XMLHttpRequest()
+        } else if (window.ActiveXObjectObject) {
+          return new window.ActiveXObjectObject('Microsoft.XMLHTTP')
+        }
+      })()
+
+      // 连接和发送
+      xhr.open('GET', obj.url, true)
+      xhr.setRequestHeader('Content-Type', (obj.headers && obj.headers['Content-Type']) || 'application/x-www-form-urlencoded')
+      xhr.send(params)
+
+      // 接收
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          console.log(xhr)
+          if (xhr.status >= 200 && xhr.status < 300) {
+            obj.success && obj.success(xhr.responseText, xhr.responseXML)
+            obj.complete && obj.complete()
+          } else {
+            obj.error && obj.error(xhr.status)
+            obj.complete && obj.complete()
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>
