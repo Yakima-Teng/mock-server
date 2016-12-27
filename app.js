@@ -130,9 +130,9 @@ function onError (error) {
     throw error
   }
 
-  const bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port
+  const bind = typeof config.port === 'string'
+    ? 'Pipe ' + config.port
+    : 'Port ' + config.port
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
