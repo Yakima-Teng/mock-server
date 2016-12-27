@@ -4,7 +4,7 @@
   "description": "服务器端数据模拟，方便前端工程师独立于后端进行开发。该项目的目标是实现一个简单易用的前端数据模拟工具，支持自定义数据模拟、请求代理、跨域访问。目前只支持http请求，不支持websocket通讯。",
   "main": "app.js",
   "scripts": {
-    "dev": "node --use-strict app.js",
+    "dev": "nodemon --use-strict app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,6 +24,7 @@
     "http-proxy-middleware": "^0.17.3",
     "markdown-it": "^8.2.2",
     "mockjs": "^1.0.1-beta3",
+    "nodemon": "^1.11.0",
     "opn": "^4.0.2",
     "serve-favicon": "^2.3.2",
     "stream-body": "^1.0.4"
