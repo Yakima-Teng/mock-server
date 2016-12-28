@@ -17,6 +17,17 @@ const config = {
   },
   // 读取固定的JSON文件内容作为返回值
   jsonTable: [
+    '/manage2/intention/list',
+    '/manage2/order/list',
+    '/manage2/insurance/query',
+    '/manage2/courier/list',
+    '/manage2/salemanManage/list',
+    '/manage2/commission/commissionPayDetailList',
+    '/manage2/commission/commissionPayList',
+    '/manage2/dopay/list',
+    '/manage2/salemanManage/list',
+    '/manage2/courier/list',
+    '/manage2/courier/save',
     '/manage2/dept/findPage',
     '/manage2/dept/findAllDept',
     '/manage2/dept/save',

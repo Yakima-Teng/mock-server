@@ -79,7 +79,7 @@ config.jsonTable.forEach(context => {
     if (err) {
       console.log(err)
       console.log(`${filePathAndName} may not exist, trying to build it ...`)
-      fs.writeFile(filePathAndName, '', err => {
+      fs.writeFile(filePathAndName, '{}', err => {
         console.log(err ? `${filePathAndName}文件创建失败！` : `${filePathAndName}文件创建成功！`)
       })
     }
@@ -109,7 +109,7 @@ config.customTable.forEach(context => {
     if (err) {
       console.log(err)
       console.log(`${filePathAndName} may not exist, trying to build it ...`)
-      fs.writeFile(filePathAndName, '', err => {
+      fs.writeFile(filePathAndName, 'module.exports = () => { return {} }', err => {
         console.log(err ? `${filePathAndName}文件创建失败！` : `${filePathAndName}文件创建成功！`)
       })
     }
