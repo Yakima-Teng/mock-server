@@ -68,23 +68,28 @@ Object.keys(config.proxyTable).forEach(context => {
 })
 
 // response row json file content
-Object.keys(config.jsonTable).forEach(context => {
-  let fileName = config.jsonTable[context]
+config.jsonTable.forEach(context => {
+  // 根据路径生成对应的文件名（不含文件后缀）
+  const fileName = transferPathToFileName(context)
+  if (!fileName) { return }
+
+  // 若config.jsonTable数组中存在尚未建立对应json文件的路径，则创建之，免去手动创建的麻烦
+  const filePathAndName = path.join(__dirname, 'mock', 'json', `${fileName}.json`)
+  fs.access(filePathAndName, fs.F_OK, err => {
+    if (err) {
+      console.log(err)
+      console.log(`${filePathAndName} may not exist, trying to build it ...`)
+      fs.writeFile(filePathAndName, '', err => {
+        console.log(err ? `${filePathAndName}文件创建失败！` : `${filePathAndName}文件创建成功！`)
+      })
+    }
+  })
+
+  // 路由配置
   app.all(context, (req, res, next) => {
-    const filePathAndName = path.join(__dirname, 'mock', 'json', `${fileName}.json`)
     fs.readFile(filePathAndName, (err, data) => {
       if (err) {
-        console.log(err)
-        fs.access(filePathAndName, fs.F_OK, err => {
-          if (err) {
-            console.log(err)
-            console.log(`${filePathAndName} may not exist, trying to build it ...`)
-            fs.writeFile(filePathAndName, '', err => {
-              console.log(err ? `${filePathAndName}文件创建失败！` : `${filePathAndName}文件创建成功！`)
-            })
-          }
-        })
-        res.json({})
+        res.json(err)
         return
       }
       res.json(JSON.parse(data.toString()))
@@ -93,9 +98,25 @@ Object.keys(config.jsonTable).forEach(context => {
 })
 
 // response custom content
-Object.keys(config.customTable).forEach(context => {
+config.customTable.forEach(context => {
+  // 根据路径生成对应的文件名（不含文件后缀）
+  const fileName = transferPathToFileName(context)
+  if (!fileName) { return }
+
+  // 若config.jsonTable数组中存在尚未建立对应json文件的路径，则创建之，免去手动创建的麻烦
+  const filePathAndName = path.join(__dirname, 'mock', 'custom', `${fileName}.js`)
+  fs.access(filePathAndName, fs.F_OK, err => {
+    if (err) {
+      console.log(err)
+      console.log(`${filePathAndName} may not exist, trying to build it ...`)
+      fs.writeFile(filePathAndName, '', err => {
+        console.log(err ? `${filePathAndName}文件创建失败！` : `${filePathAndName}文件创建成功！`)
+      })
+    }
+  })
+
+  // 路由配置
   app.all(context, (req, res, next) => {
-    const filePathAndName = path.join(__dirname, 'mock', 'custom', `${config.customTable[context]}.js`)
     const content = require(filePathAndName)()
     res.json(content)
   })
@@ -149,6 +170,15 @@ function onError (error) {
   }
 }
 
+// translate '/a/b-d/c#d?q=hello' to 'a-b-d-c'
+function transferPathToFileName (path) {
+  if (!/^\/.*$/.test(path)) {
+    console.log(`[PATH ERROR]: path should start with symbol '/' instead of your ${path}`)
+    return false
+  }
+  return path.split('#')[0].split(/^\//)[1].replace(/\//g, '-')
+}
+
 // Event listener for HTTP server "listening" event.
 function onListening () {
   const addr = server.address()
@@ -163,4 +193,3 @@ function onListening () {
   // 若要禁止启动服务器时自动打开ajax测试页，请手动将下面一行代码注释掉
   // opn(`http://localhost:${config.port + config.root}`)
 }
-

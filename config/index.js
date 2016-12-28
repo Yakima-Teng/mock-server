@@ -10,24 +10,37 @@ const config = {
   root: '/test',
   // 代理请求，将请求转发至其他服务器，然后返回相应的内容
   proxyTable: {
-    '/manage2/dept/findAllDept': domain.zhangbiaoyan,
+    // '/manage2': domain.zhangbiaoyan,
     '/blog': domain.server1,
     '/blog/details': domain.server2,
     '/wechat': domain.server2
   },
   // 读取固定的JSON文件内容作为返回值
-  jsonTable: {
-    '/manage2/dept/findPage': 'manage2-dept-findPage.json',
-    '/manage2/dept/findAllDept': 'manage2-dept-findAllDept.json',
-    '/manage2/dept/save': 'manage2-dept-save.json',
-    '/manage2/funcDis/findLevel2Menu': 'manage2-funcDis-findLevel2Menu.json',
-    '/manage2/funcDis/findFVo': 'manage2-funcDis-findFVo.json',
-    '/manage2/funcDis/saveF': 'manage2-funcDis-saveF.json'
-  },
+  jsonTable: [
+    '/manage2/dept/findPage',
+    '/manage2/dept/findAllDept',
+    '/manage2/dept/save',
+    '/manage2/dept/save',
+    '/manage2/funcDis/findLevel2Menu',
+    '/manage2/funcDis/findFVo',
+    '/manage2/funcDis/saveF',
+    '/manage2/main/privilege',
+    '/manage2/main/login',
+    '/manage2/main/logout',
+    '/manage2/role/update',
+    '/manage2/role/save',
+    '/manage2/role/queryDetails',
+    '/manage2/role/list',
+    '/manage2/manageUser/save',
+    '/manage2/manageUser/delete',
+    '/manage2/manageUser/queryDetails',
+    '/manage2/manageUser/list',
+    '/manage2/manageUser/update'
+  ],
   // 读取用户自定义的内容，可以在此处使用第三方数据模拟工具（默认已经预装了mockjs模块，开箱即用）
-  customTable: {
-    '/great/what': 'what'
-  }
+  customTable: [
+    '/great/what'
+  ]
 }
 
 module.exports = config
