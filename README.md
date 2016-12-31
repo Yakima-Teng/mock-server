@@ -16,6 +16,20 @@
 
 Established by Yakima Teng
 
+## 使用前
+
+首先，安装程序所需的依赖包，若网速不佳，请使用淘宝在国内的npm镜像服务。
+```
+npm install
+```
+
+等待依赖安装的同时，在config目录下新建一个index.js配置文件，将同级目录下index_sample.js文件的内容复制到index.js文件中。
+
+然后，待程序所需的依赖包安装结束后，在项目根目录打开命令行工具，运行以下命令：
+```
+npm run dev
+```
+
 ## 请求代理
 
 修改配置文件中的config.proxyTable即可。示例如下：

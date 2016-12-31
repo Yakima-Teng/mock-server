@@ -14,6 +14,13 @@ const config = require('./config')
 
 let app = express()
 
+manufactureInfrastructure([
+  'public',
+  'mock/custom',
+  'mock/json',
+  'mock/proxy'
+])
+
 // allow cross-origin ajax request
 app.all('*', (req, res, next) => {
   console.log(`[${req.method}] ${req.url} ${new Date()}`)
@@ -177,6 +184,33 @@ function transferPathToFileName (path) {
     return false
   }
   return path.split('#')[0].split(/^\//)[1].replace(/\//g, '-')
+}
+
+// 构建项目文件夹
+function manufactureInfrastructure (arrPaths) {
+  arrPaths.forEach(makePathSync)
+}
+
+// 代码来源：https://github.com/joehewitt/mkdir/blob/master/lib/mkdir.js
+function makePathSync (dirPath, mode) {
+  dirPath = path.resolve(dirPath)
+
+  if (typeof mode === 'undefined') {
+    mode = parseInt('0777', 8) & (-process.umask())
+  }
+
+  try {
+    if (!fs.statSync(dirPath).isDirectory()) {
+      throw new Error(`${dirPath} exists and is not a directory`)
+    }
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      makePathSync(path.dirname(dirPath), mode)
+      fs.mkdirSync(dirPath, mode)
+    } else {
+      throw err
+    }
+  }
 }
 
 // Event listener for HTTP server "listening" event.
