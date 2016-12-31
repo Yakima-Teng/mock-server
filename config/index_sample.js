@@ -4,6 +4,7 @@ const domain = {
 }
 
 const config = {
+  showReadMe: true,
   port: '3000',
   // 将public目录映射成为url中root对应的目录
   root: '/test',
