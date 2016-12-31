@@ -189,7 +189,4 @@ function onListening () {
 
   // 若要禁止启动服务器时自动打开说明文档，请手动将下面一行代码注释掉
   opn(`http://localhost:${config.port}/readme`)
-
-  // 若要禁止启动服务器时自动打开ajax测试页，请手动将下面一行代码注释掉
-  opn(`http://localhost:${config.port + config.root}`)
 }
