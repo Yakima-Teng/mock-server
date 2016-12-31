@@ -10,9 +10,14 @@ const config = {
   root: '/test',
   // 代理请求，将请求转发至其他服务器，然后返回相应的内容
   proxyTable: {
-    '/blog': domain.server1,
-    '/blog/details': domain.server2,
-    '/wechat': domain.server2
+    '/blog': {
+      target: domain.server2,
+      changeOrigin: true
+    },
+    '/wechat/KqPay': {
+      target: domain.server1,
+      changeOrigin: true
+    }
   },
   // 读取固定的JSON文件内容作为返回值
   jsonTable: [

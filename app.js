@@ -30,6 +30,23 @@ app.all('*', (req, res, next) => {
   next()
 })
 
+// proxy api requests
+Object.keys(config.proxyTable).forEach(function (context) {
+  var options = config.proxyTable[context]
+  if (typeof options === 'string') {
+    options = { target: options }
+  }
+  options.onProxyRes = (proxyRes, req, res) => {
+    body.parse(proxyRes, (err, data) => {
+      const fileName = `${req.url.split('#')[0].split('?')[0].split(/^\//)[1].replace(/\//g, '-')}.json`
+      fs.writeFile(path.join(__dirname, 'mock', 'proxy', fileName), JSON.stringify(data, null, 2), err => {
+        if (err) { console.log(err) }
+      })
+    })
+  }
+  app.use(proxyMiddleware(context, options))
+})
+
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 
 // enable uploading large file
@@ -54,24 +71,6 @@ app.get('/readme', (req, res, next) => {
     const readme = md.render(data.toString())
     res.send(readme)
   })
-})
-
-// proxy api requests
-Object.keys(config.proxyTable).forEach(context => {
-  let options = config.proxyTable[context]
-  options = {
-    target: options,
-    changeOrigin: true,
-    onProxyRes (proxyRes, req, res) {
-      body.parse(proxyRes, (err, data) => {
-        const fileName = `${req.url.split('#')[0].split('?')[0].split(/^\//)[1].replace(/\//g, '-')}.json`
-        fs.writeFile(path.join(__dirname, 'mock', 'proxy', fileName), JSON.stringify(data, null, 2), err => {
-          if (err) { console.log(err) }
-        })
-      })
-    }
-  }
-  app.use(proxyMiddleware(context, options))
 })
 
 // response row json file content

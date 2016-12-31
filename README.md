@@ -36,9 +36,14 @@ npm run dev
 
 ```
 proxyTable: {
-  '/blog': 'http://yakima.duapp.com/',
-  '/blog/details': 'http://localhost:6060',
-  '/wechat': 'http:localhost:6060'
+  '/blog': {
+    target: "http://yakima.duapp.com",
+    changeOrigin: true
+  },
+  '/wechat/KqPay': {
+    target: "http://yakima.duapp.com",
+    changeOrigin: true
+  }
 }
 ```
 
