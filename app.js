@@ -109,7 +109,7 @@ config.customTable.forEach(context => {
     if (err) {
       console.log(err)
       console.log(`${filePathAndName} may not exist, trying to build it ...`)
-      fs.writeFile(filePathAndName, 'module.exports = () => { return {} }', err => {
+      fs.writeFile(filePathAndName, 'module.exports = (req) => { return {} }', err => {
         console.log(err ? `${filePathAndName}文件创建失败！` : `${filePathAndName}文件创建成功！`)
       })
     }
@@ -117,7 +117,7 @@ config.customTable.forEach(context => {
 
   // 路由配置
   app.all(context, (req, res, next) => {
-    const content = require(filePathAndName)()
+    const content = require(filePathAndName)(req)
     res.json(content)
   })
 })
@@ -188,8 +188,8 @@ function onListening () {
   console.log('Listening on ' + bind)
 
   // 若要禁止启动服务器时自动打开说明文档，请手动将下面一行代码注释掉
-  // opn(`http://localhost:${config.port}/readme`)
+  opn(`http://localhost:${config.port}/readme`)
 
   // 若要禁止启动服务器时自动打开ajax测试页，请手动将下面一行代码注释掉
-  // opn(`http://localhost:${config.port + config.root}`)
+  opn(`http://localhost:${config.port + config.root}`)
 }

@@ -2,11 +2,13 @@
 
 服务器端数据模拟，方便前端工程师独立于后端进行开发。支持跨域访问，支持post大文件（不会在硬盘上进行存储）。
 
+本程序根据个人的实际使用情况在操作的简便性和功能的丰富性之间做了适当的取舍，“返回静态JSON数据”时不对请求方式（POST、GET这种）进行区分，只针对请求地址进行响应。如果想要根据根据请求方式进行区别响应，可使用“请求代理”或“返回JS自定义数据”。
+
 适用于前端为http请求，后端返回json数据的场景。
 
 说明：本文档中“配置文件”指的是config目录下的index.js文件
 
-说明：如要在服务器启动时自动打开一个说明文档页面和一个ajax测试页面，请掉app.js文件中结尾处的两处注释。
+说明：如要在服务器启动时自动打开一个说明文档页面和一个ajax测试页面，请取消app.js文件中结尾处的两处注释。
 
 ## 截图
 
@@ -40,16 +42,22 @@ proxyTable: {
 修改配置文件中的config.jsonTable即可。示例配置如下：
 
 ```
-jsonTable: {
-  '/world/example': 'example'
-}
+jsonTable: [
+  '/manage2/intention/list',
+  '/manage2/carInsurance/queryDetails',
+  '/manage2/carInsurance/updateQuotation',
+  '/manage2/order/list',
+  '/manage2/order/queryDetails',
+  '/manage2/order/updateSalesman',
+  '/manage2/order/update'
+]
 ```
 
 如上配置对应的描述如下：
 
-若本地发起了请求地址为/world/example的请求，则服务器会将/mock/json/example.json的内容予以返回。
+若本地发起了请求地址为“/manage2/intention/list”的请求，则服务器会将/mock/json/manage2-intention-list.json的内容予以返回。
 
-注意：需要在启动服务器之前，先在/mock/json目录下手动建立对应的json文件，并自行填充数据；如果您未手动新建json文件，程序会自动帮你新建一个空的json文件，内容还需您自行填充。
+注意：需要在启动服务器之前，先在/mock/json目录下手动建立对应的json文件，并自行填充数据；如果您未手动新建json文件，程序会自动帮你新建一个内容为“{}”的json文件，内容还需您自行填充。一般来说用后面这种方法会比较方便，修改了文件后程序会自动重启的，不需要重复操作命令行工具。
 
 小技巧：可以将程序在/mock/proxy目录下生成的备份文件拷贝至此处使用。
 
@@ -67,7 +75,7 @@ customTable: {
 
 若本地发起了请求地址为/great/what,则服务器会将/mock/custom/what.js文件中导出的函数予以调用，并将函数返回值发送至前端。
 
-注意：需要在启动服务器之前，先在/mock/custom目录下手动建立对应的js文件，在改js文件中通过module.exports导出一个函数，该函数需要返回一个json数据。
+注意：需要在启动服务器之前，先在/mock/custom目录下手动建立对应的js文件，在改js文件中通过module.exports导出一个函数，该函数需要返回一个json数据；另外，该函数可接收一个表示请求的req参数，从而可以根据req来判断请求方式、传参等来动态输入自定义内容。
 
 说明：之所以在自定义js文件中导出函数而非直接导出数据，是为了便于服务器返回随机数据。
 
@@ -78,13 +86,23 @@ customTable: {
 ```
 const Mock = require('mockjs')
 
-const returnRes = () => {
+const returnRes = (req) => {
   return Mock.mock({
     // 属性 list 的值是一个数组，其中含有 1 到 10 个元素
     'list|1-10': [{
       // 属性 id 是一个自增数，起始值为 1，每次增 1
       'id|+1': 1
-    }]
+    }],
+    // 请求方式
+    method: req.method,
+    // 传参
+    params: (() => {
+      if (req.method === 'POST') {
+        return req.body
+      } else if (req.method === 'GET') {
+        return req.query
+      }
+    })()
   })
 }
 
