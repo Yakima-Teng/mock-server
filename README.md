@@ -66,16 +66,16 @@ jsonTable: [
 修改配置文件中的config.customTable即可。示例配置如下：
 
 ```
-customTable: {
-  '/great/what': 'what'
-}
+customTable: [
+  '/great/what'
+]
 ```
 
 如上配置对应的描述如下：
 
-若本地发起了请求地址为/great/what,则服务器会将/mock/custom/what.js文件中导出的函数予以调用，并将函数返回值发送至前端。
+若本地发起了请求地址为/great/what,则服务器会将/mock/custom/great-what.js文件中导出的函数予以调用，并将函数返回值发送至前端。
 
-注意：需要在启动服务器之前，先在/mock/custom目录下手动建立对应的js文件，在改js文件中通过module.exports导出一个函数，该函数需要返回一个json数据；另外，该函数可接收一个表示请求的req参数，从而可以根据req来判断请求方式、传参等来动态输入自定义内容。
+注意：在启动服务器之前，先在/mock/custom目录下手动建立对应的js文件，在该js文件中通过module.exports导出一个函数，该函数需要返回一个json数据（也可以让程序自动创建该文件，程序自动创建的文件会默认写入“module.exports = (req) => { return {} }”来作为占位内容）；另外，该函数可接收一个表示请求的req参数，从而可以根据req来判断请求方式、传参等来动态输入自定义内容。
 
 说明：之所以在自定义js文件中导出函数而非直接导出数据，是为了便于服务器返回随机数据。
 
