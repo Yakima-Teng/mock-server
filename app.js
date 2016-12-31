@@ -84,11 +84,13 @@ config.jsonTable.forEach(context => {
   const filePathAndName = path.join(__dirname, 'mock', 'json', `${fileName}.json`)
   fs.access(filePathAndName, fs.F_OK, err => {
     if (err) {
-      console.log(err)
-      console.log(`${filePathAndName} may not exist, trying to build it ...`)
-      fs.writeFile(filePathAndName, '{}', err => {
-        console.log(err ? `${filePathAndName}文件创建失败！` : `${filePathAndName}文件创建成功！`)
-      })
+      if (err.code === 'ENOENT') {
+        fs.writeFile(filePathAndName, '{}', err => {
+          console.log(err ? `${filePathAndName}文件创建失败！` : `${filePathAndName}文件创建成功！`)
+        })
+      } else {
+        console.log(err)
+      }
     }
   })
 
@@ -114,11 +116,13 @@ config.customTable.forEach(context => {
   const filePathAndName = path.join(__dirname, 'mock', 'custom', `${fileName}.js`)
   fs.access(filePathAndName, fs.F_OK, err => {
     if (err) {
-      console.log(err)
-      console.log(`${filePathAndName} may not exist, trying to build it ...`)
-      fs.writeFile(filePathAndName, 'module.exports = (req) => { return {} }', err => {
-        console.log(err ? `${filePathAndName}文件创建失败！` : `${filePathAndName}文件创建成功！`)
-      })
+      if (err.code === 'ENOENT') {
+        fs.writeFile(filePathAndName, 'module.exports = (req) => { return {} }', err => {
+          console.log(err ? `${filePathAndName}文件创建失败！` : `${filePathAndName}文件创建成功！`)
+        })
+      } else {
+        console.log(err)
+      }
     }
   })
 
