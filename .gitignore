@@ -39,3 +39,5 @@ json
 proxy
 custom
 /config/index.js
+/public
+/mock
