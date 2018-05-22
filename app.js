@@ -191,7 +191,7 @@ function transferPathToFileName (path) {
 
 // 构建项目文件夹
 function manufactureInfrastructure (arrPaths) {
-  arrPaths.forEach(makePathSync)
+  arrPaths.forEach((path) => { makePathSync(path) })
 }
 
 // 代码来源：https://github.com/joehewitt/mkdir/blob/master/lib/mkdir.js
