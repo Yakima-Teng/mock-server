@@ -256,13 +256,22 @@ function onListening () {
 }
 
 function saveProxyData (fileName, fileData) {
-  fs.writeFile(path.join(__dirname, 'mock', 'proxy', fileName), (() => {
-    try {
-      return JSON.stringify(JSON.parse(fileData), null, 4)
-    } catch (e) {
-      console.log(e)
+  const filePathAndName = path.join(__dirname, 'mock', 'proxy', fileName)
+  fs.access(filePathAndName, fs.F_OK, err => {
+    if (err) {
+      if (err.code === 'ENOENT') {
+        fs.writeFile(filePathAndName, (() => {
+          try {
+            return JSON.stringify(JSON.parse(fileData), null, 4)
+          } catch (e) {
+            console.log(e)
+          }
+        })(), err => {
+          if (err) { console.log(err) }
+        })
+      } else {
+        console.log(err)
+      }
     }
-  })(), err => {
-    if (err) { console.log(err) }
   })
 }
