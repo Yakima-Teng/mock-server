@@ -9,7 +9,7 @@ const proxyMiddleware = require('http-proxy-middleware')
 const md = new require('markdown-it')()
 const opn = require('opn')
 const body = require('stream-body')
-
+const zlib = require('zlib')
 const config = require('./config')
 
 let app = express()
@@ -32,16 +32,41 @@ app.all('*', (req, res, next) => {
 
 // proxy api requests
 Object.keys(config.proxyTable).forEach(function (context) {
-  var options = config.proxyTable[context]
+  let options = config.proxyTable[context]
   if (typeof options === 'string') {
     options = { target: options }
   }
+  options.proxyTimeout = 30000
+  options.onProxyReq = (proxyReq, req, res) => {}
   options.onProxyRes = (proxyRes, req, res) => {
-    body.parse(proxyRes, (err, data) => {
-      const fileName = `${req.url.split('#')[0].split('?')[0].split(/^\//)[1].replace(/\//g, '-')}.json`
-      fs.writeFile(path.join(__dirname, 'mock', 'proxy', fileName), JSON.stringify(data, null, 2), err => {
-        if (err) { console.log(err) }
-      })
+    const proxyHeaders = proxyRes.headers
+    const chunks = []
+    const fileName = `${req.url.split('#')[0].split('?')[0].split(/^\//)[1].replace(/\//g, '-')}.json`
+    proxyRes.on('data', chunk => {
+      chunks.push(chunk)
+    })
+    proxyRes.on('end', () => {
+      const encoding = proxyHeaders['content-encoding']
+      const buffer = Buffer.concat(chunks)
+      if (encoding === 'gzip') {
+        zlib.gunzip(buffer, function (err, decoded) {
+          if (err) {
+            console.log(err)
+            return
+          }
+          saveProxyData(fileName, decoded.toString())
+        })
+      } else if (encoding === 'deflate') {
+        zlib.inflate(buffer, function (err, decoded) {
+          if (err) {
+            console.log(err)
+            return
+          }
+          saveProxyData(fileName, decoded.toString())
+        })
+      } else {
+        saveProxyData(fileName, buffer.toString())
+      }
     })
   }
   app.use(proxyMiddleware(context, options))
@@ -134,7 +159,7 @@ config.customTable.forEach(context => {
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
-  var err = new Error('Not Found')
+  const err = new Error('Not Found')
   err.status = 404
   next(err)
 })
@@ -228,4 +253,16 @@ function onListening () {
   if (config.showReadMe) {
     opn(`http://localhost:${config.port}/readme`)
   }
+}
+
+function saveProxyData (fileName, fileData) {
+  fs.writeFile(path.join(__dirname, 'mock', 'proxy', fileName), (() => {
+    try {
+      return JSON.stringify(JSON.parse(fileData), null, 4)
+    } catch (e) {
+      console.log(e)
+    }
+  })(), err => {
+    if (err) { console.log(err) }
+  })
 }

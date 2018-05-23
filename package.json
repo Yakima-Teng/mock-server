@@ -28,6 +28,7 @@
     "nodemon": "^1.11.0",
     "opn": "^4.0.2",
     "serve-favicon": "^2.3.2",
-    "stream-body": "^1.0.4"
+    "stream-body": "^1.0.4",
+    "zlib": "^1.0.5"
   }
 }
